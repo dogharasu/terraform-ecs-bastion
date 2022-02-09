@@ -1,3 +1,3 @@
 # terraform-ecs-bastion
 for ECS Bastion host
-![](./images/ecs-bastion.dio.png)
+![](./images/ecs-bastion-image.png)
