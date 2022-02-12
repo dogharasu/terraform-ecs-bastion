@@ -1,13 +1,23 @@
-FROM amazonlinux:2
-RUN yum install -y sudo jq awscli shadow-utils htop lsof telnet bind-utils yum-utils && \
-    yum install -y https://s3.ap-northeast-1.amazonaws.com/amazon-ssm-ap-northeast-1/latest/linux_amd64/amazon-ssm-agent.rpm && \
-    yum localinstall -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm && \
-    yum-config-manager --disable mysql80-community && \
-    yum-config-manager --enable mysql57-community && \
-    rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 && \
-    yum install -y mysql-community-client && \
-    adduser ssm-user && echo "ssm-user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ssm-agent-users && \
-    mv /etc/amazon/ssm/amazon-ssm-agent.json.template /etc/amazon/ssm/amazon-ssm-agent.json && \
-    mv /etc/amazon/ssm/seelog.xml.template /etc/amazon/ssm/seelog.xml
-COPY run.sh /run.sh
-CMD ["sh", "/run.sh"]
+#/bin/sh
+
+SSM_SERVICE_ROLE_NAME="dev-ssm-role"
+SSM_ACTIVATION_FILE="code.json"
+AWS_REGION="ap-northeast-1"
+
+aws ssm create-activation \
+--description "Activation Code for Fargate Bastion" \
+--default-instance-name bastion \
+--iam-role ${SSM_SERVICE_ROLE_NAME} \
+--registration-limit 1 \
+--tags Key=Type,Value=Bastion \
+--region ${AWS_REGION} | tee ${SSM_ACTIVATION_FILE}
+
+SSM_ACTIVATION_ID=`cat ${SSM_ACTIVATION_FILE} | jq -r .ActivationId`
+SSM_ACTIVATION_CODE=`cat ${SSM_ACTIVATION_FILE} | jq -r .ActivationCode`
+rm -f ${SSM_ACTIVATION_FILE}
+
+amazon-ssm-agent -register -code "${SSM_ACTIVATION_CODE}" -id "${SSM_ACTIVATION_ID}" -region ${AWS_REGION}
+
+aws ssm delete-activation --activation-id ${SSM_ACTIVATION_ID}
+
+amazon-ssm-agent

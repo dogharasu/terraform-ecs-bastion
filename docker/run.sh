@@ -1,10 +1,22 @@
-set -e
-SSM_ACTIVATION=$(aws ssm create-activation \
---default-instance-name "bastion-container" \
---iam-role "dev-ssm-role" \
---registration-limit 1 \
---region "ap-northeast-1")
-export SSM_ACTIVATION_CODE=$(echo $SSM_ACTIVATION | jq -r .ActivationCode)
-export SSM_ACTIVATION_ID=$(echo $SSM_ACTIVATION | jq -r .ActivationId)
-amazon-ssm-agent -register -code $SSM_ACTIVATION_CODE -id $SSM_ACTIVATION_ID -region ap-northeast-1
-exec "$@"
+#/bin/sh
+
+# Preparation
+SSM_SERVICE_ROLE_NAME="dev-ssm-role"
+SSM_ACTIVATION_FILE="code.json"
+AWS_REGION="ap-northeast-1"
+
+# Create Activation Code on Systems Manager
+aws ssm create-activation --description "Activation Code for Fargate Bastion" --default-instance-name bastion --iam-role ${SSM_SERVICE_ROLE_NAME} --registration-limit 1 --tags Key=Type,Value=Bastion --region ${AWS_REGION} | tee ${SSM_ACTIVATION_FILE}
+
+SSM_ACTIVATION_ID=`cat ${SSM_ACTIVATION_FILE} | jq -r .ActivationId`
+SSM_ACTIVATION_CODE=`cat ${SSM_ACTIVATION_FILE} | jq -r .ActivationCode`
+rm -f ${SSM_ACTIVATION_FILE}
+
+# Activate SSM Agent on Fargate Task
+amazon-ssm-agent -register -code "${SSM_ACTIVATION_CODE}" -id "${SSM_ACTIVATION_ID}" -region ${AWS_REGION}
+
+# Delete Activation Code
+aws ssm delete-activation --activation-id ${SSM_ACTIVATION_ID}
+
+# Execute SSM Agent
+amazon-ssm-agent
