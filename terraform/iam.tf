@@ -36,3 +36,12 @@ resource "aws_iam_role" "ssm_role" {
     path                  = "/"
 }
 
+resource "aws_iam_role" "cloud9_role" {
+    assume_role_policy    = file("./iam_policy/cloud9-trust.json")
+    description           = "cloud9"
+    managed_policy_arns   = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+    max_session_duration  = 3600
+    name                  = "dev-cloud9-role"
+    path                  = "/"
+}
+

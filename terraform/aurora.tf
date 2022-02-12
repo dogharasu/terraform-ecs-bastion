@@ -36,7 +36,6 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
     engine                                = "aurora-mysql"
     instance_class                        = "db.t3.small"
     performance_insights_enabled          = false
-    preferred_backup_window               = "13:25-13:55"
     preferred_maintenance_window          = "thu:17:23-thu:17:53"
     promotion_tier                        = 1
     publicly_accessible                   = false
