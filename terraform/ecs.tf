@@ -39,13 +39,13 @@ resource "aws_ecs_task_definition" "task_definition" {
 # ECS Service
 ############################################################################
 resource "aws_ecs_service" "ecs_service" {
+    cluster         = aws_ecs_cluster.ecs_cluster.id
     deployment_maximum_percent         = 200
     deployment_minimum_healthy_percent = 100
     desired_count                      = 0
     enable_ecs_managed_tags            = true
     enable_execute_command             = false
     health_check_grace_period_seconds  = 0
-    iam_role                           = "aws-service-role"
     launch_type                        = "FARGATE"
     name                               = "dev-service"
     platform_version                   = "LATEST"
@@ -71,5 +71,4 @@ resource "aws_ecs_service" "ecs_service" {
         ]
     }
 }
-
 */
