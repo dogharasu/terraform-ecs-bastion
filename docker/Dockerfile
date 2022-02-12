@@ -11,4 +11,3 @@ RUN yum install -y sudo jq awscli shadow-utils htop lsof telnet bind-utils yum-u
     mv /etc/amazon/ssm/seelog.xml.template /etc/amazon/ssm/seelog.xml
 COPY run.sh /run.sh
 CMD ["sh", "/run.sh"]
-

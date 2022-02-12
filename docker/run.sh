@@ -1,4 +1,3 @@
-#/bin/sh
 set -e
 SSM_ACTIVATION=$(aws ssm create-activation \
 --default-instance-name "bastion-container" \
