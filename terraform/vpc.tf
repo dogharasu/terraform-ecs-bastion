@@ -2,20 +2,20 @@
 # VPC
 ############################################################################
 resource "aws_vpc" "vpc" {
-    cidr_block                       = "10.0.0.0/16"
-    tags                             = {
-        "Name" = "dev-vpc"
-    }
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    "Name" = "dev-vpc"
+  }
 }
 
 ############################################################################
 # InternetGateway
 ############################################################################
 resource "aws_internet_gateway" "igw" {
-    tags     = {
-        "Name" = "dev-igw"
-    }
-    vpc_id   = aws_vpc.vpc.id
+  tags = {
+    "Name" = "dev-igw"
+  }
+  vpc_id = aws_vpc.vpc.id
 }
 
 

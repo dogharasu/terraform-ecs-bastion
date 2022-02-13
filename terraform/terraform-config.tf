@@ -19,10 +19,10 @@ terraform {
 ############################################################################
 terraform {
   backend "s3" {
-    bucket         = "dev-s3-terraform-ecs-bastion-20220206"
+    bucket         = "dev-s3-terraform-ecs-bastion-20220206" # 任意のバケット名に書き換える
     key            = "state/terraform.tfstate"
     encrypt        = true
     region         = "ap-northeast-1"
-    dynamodb_table = "dev-dynamodb-terraform-ecs-bastion"
+    dynamodb_table = "dev-dynamodb-terraform-ecs-bastion" # 任意のテーブル名に書き換える
   }
 }
