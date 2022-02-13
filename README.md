@@ -5,4 +5,5 @@ for ECS Bastion host
 
 # 構築方法
 本リポジトリのコードを使用します。  
-詳細な手順は以下記事に記載しています。
+詳細な手順は以下記事で紹介しています。  
+https://blog-benri-life.com/ecs-on-fargate-bastion-by-terraform/
